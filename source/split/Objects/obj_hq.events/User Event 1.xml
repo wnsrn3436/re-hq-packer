@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event category="OTHER" id="11">
+  <actions>
+    <action id="603" library="1">
+      <!--action name: Code-->
+      <kind>CODE</kind>
+      <allowRelative>false</allowRelative>
+      <question>false</question>
+      <canApplyTo>true</canApplyTo>
+      <actionType>CODE</actionType>
+      <functionName/>
+      <relative>false</relative>
+      <not>false</not>
+      <appliesTo>.self</appliesTo>
+      <arguments>
+        <argument kind="STRING">file_name[1] = "Data"
+file_name[0] = "Data.hq"
+for(i=0; i!=2; i+=1)
+{
+    file_delete(file_name[i]+".txt")
+    file = file_bin_open(file_name[i], 0)
+    file2 = file_bin_open(file_name[i]+".txt", 1)
+    for(j=0; j!=file_bin_size(file); j+=1)
+    {
+        byte = file_bin_read_byte(file)
+        if(byte &amp; 16)
+        {
+            if(i=0)
+            {
+                if(byte-16=29){byte=45+16}
+                if(byte-16=26){byte=62+16}
+            }
+            file_bin_write_byte(file2, byte-16)
+        }
+        else
+        {
+            if(i=0)
+            {
+                if(byte+16=29){byte=45-16}
+                if(byte+16=26){byte=62-16}
+            }
+            file_bin_write_byte(file2, byte+16)
+        }
+    }
+    file_bin_close(file2)
+    file_bin_close(file)
+}
+
+file = file_text_open_read(file_name[0]+".txt")
+str = file_text_read_string(file)
+file_text_close(file)
+
+bstr = str
+for(i=0; i=i; i+=1)
+{
+    bstr = string_delete(bstr, 1, string_pos("-&gt;", bstr)+1)
+    if(bstr!="")
+    {
+        fname[i] = string_delete(bstr, string_pos(chr(9), bstr), string_length(bstr))
+    }
+    else{break}
+}
+fcount = i
+
+bstr = string_delete(str, 1, 16)
+for(i=0; i!=fcount; i+=1)
+{
+    bstr = string_delete(bstr, 1, string_pos("[", bstr))
+    fsize[i] = real(string_delete(bstr, string_pos("]", bstr), string_length(bstr)))
+    bstr = string_delete(bstr, 1, string_pos("[", bstr))
+    foffset[i] = real(string_delete(bstr, string_pos("]", bstr), string_length(bstr)))
+}
+
+if(!directory_exists(working_directory+"\unpacked")){directory_create(working_directory+"\unpacked")}
+for(i=0; i!=fcount; i+=1)
+{
+    if(!directory_exists(working_directory+"\unpacked\"+filename_path(fname[i]))){directory_create(working_directory+"\unpacked\"+filename_path(fname[i]))}
+    file_delete("unpacked\"+fname[i])
+    file = file_bin_open(file_name[1]+".txt", 0)
+    file2 = file_bin_open("unpacked\"+fname[i], 1)
+    file_bin_seek(file, foffset[i])
+    for(j=0; j!=fsize[i]; j+=1)
+    {
+        file_bin_write_byte(file2, file_bin_read_byte(file))
+    }
+    file_bin_close(file2)
+    file_bin_close(file)
+}
+
+file_delete("unpacked.info")
+file = file_text_open_write("unpacked.info")
+for(i=0; i!=fcount; i+=1)
+{
+    file_text_write_string(file, fname[i])
+    file_text_writeln(file)
+}
+file_text_close(file)
+</argument>
+      </arguments>
+    </action>
+  </actions>
+</event>

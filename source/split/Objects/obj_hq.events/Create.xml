@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event category="CREATE" id="0">
+  <actions>
+    <action id="603" library="1">
+      <!--action name: Code-->
+      <kind>CODE</kind>
+      <allowRelative>false</allowRelative>
+      <question>false</question>
+      <canApplyTo>true</canApplyTo>
+      <actionType>CODE</actionType>
+      <functionName/>
+      <relative>false</relative>
+      <not>false</not>
+      <appliesTo>.self</appliesTo>
+      <arguments>
+        <argument kind="STRING">if(show_question("Do you want packing?"))
+{
+    if(file_exists("unpacked.info"))
+    {
+        event_user(0)
+        file_delete("unpacked.info")
+        file_delete("wnsrn3436.bat")
+        file = file_text_open_write("wnsrn3436.bat")
+        file_text_write_string(file, "rd /s /q "+chr(34)+working_directory+"\unpacked"+chr(34))
+        file_text_close(file)
+        execute_program("wnsrn3436.bat", "", 1)
+        file_delete("wnsrn3436.bat")
+        show_message("Completed!")
+    }
+    else{show_message("'unpacked.info' File Not Exist!")}
+}
+else
+{
+    if(file_exists("Data.hq") and file_exists("Data"))
+    {
+        event_user(1)
+        file_delete("Data.hq.txt")
+        file_delete("Data.txt")
+        file_delete("Data.hq")
+        file_delete("Data")
+        show_message("Completed!")
+    }
+    else{show_message("'Data.hq' or 'Data' File Not Exist!")}
+}
+game_end()
+</argument>
+      </arguments>
+    </action>
+  </actions>
+</event>

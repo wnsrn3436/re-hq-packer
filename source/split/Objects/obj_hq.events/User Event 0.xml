@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event category="OTHER" id="10">
+  <actions>
+    <action id="603" library="1">
+      <!--action name: Code-->
+      <kind>CODE</kind>
+      <allowRelative>false</allowRelative>
+      <question>false</question>
+      <canApplyTo>true</canApplyTo>
+      <actionType>CODE</actionType>
+      <functionName/>
+      <relative>false</relative>
+      <not>false</not>
+      <appliesTo>.self</appliesTo>
+      <arguments>
+        <argument kind="STRING">file = file_text_open_read("unpacked.info")
+for(i=0; i=i; i+=1)
+{
+    fname[i] = "unpacked\"+file_text_read_string(file)
+    if(fname[i]="unpacked\"){break}
+    file_text_readln(file)
+}
+fcount = i
+file_text_close(file)
+
+for(i=0; i!=fcount; i+=1)
+{
+    file = file_bin_open(fname[i], 0)
+    fsize[i] = file_bin_size(file)
+    file_bin_close(file)
+}
+
+str = "총라인수 : ["+string(fcount)+"]-&gt;"
+total = 0
+for(i=0; i!=fcount; i+=1)
+{
+    str+=string_delete(fname[i], 1, 9)+chr(9)+"["+string(fsize[i])+"]"+chr(9)+"["+string(total)+"]-&gt;"
+    total+=fsize[i]
+}
+file_delete("Data.hq.txt")
+file = file_text_open_write("Data.hq.txt")
+file_text_write_string(file, str)
+file_text_close(file)
+
+file_delete("Data.txt")
+file = file_bin_open("Data.txt", 1)
+for(i=0; i!=fcount; i+=1)
+{
+    file2 = file_bin_open(fname[i], 0)
+    repeat(fsize[i])
+    {
+        file_bin_write_byte(file, file_bin_read_byte(file2))
+    }
+    file_bin_close(file2)
+    file_delete(fname[i])
+}
+file_bin_close(file)
+
+file_name[1] = "Data.txt"
+file_name[0] = "Data.hq.txt"
+for(i=0; i!=2; i+=1)
+{
+    file_delete(filename_change_ext(file_name[i], ""))
+    file = file_bin_open(file_name[i], 0)
+    file2 = file_bin_open(filename_change_ext(file_name[i], ""), 1)
+    for(j=0; j!=file_bin_size(file); j+=1)
+    {
+        byte = file_bin_read_byte(file)
+        if(i=0)
+        {
+            if(byte=45){byte=29}
+            if(byte=62){byte=26}
+        }
+        if(byte &amp; 16)
+        {
+            file_bin_write_byte(file2, byte-16)
+        }
+        else
+        {
+            file_bin_write_byte(file2, byte+16)
+        }
+    }
+    file_bin_close(file2)
+    file_bin_close(file)
+}
+file_delete("Data.hq.txt")
+file_delete("Data.txt")
+</argument>
+      </arguments>
+    </action>
+  </actions>
+</event>
